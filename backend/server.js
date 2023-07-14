@@ -10,21 +10,17 @@ const secretKey = 'MAPUP@123';
 
 // Authentication middleware
 const authenticate =  (req, res, next) => {
-    console.log(req.user)
     const token = req.headers.authorization;
 
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized: Missing token' });
     }
-    const tokenWithoutBearer = token.replace('Bearer ', '');
-    console.log(tokenWithoutBearer)
     try {
+        const tokenWithoutBearer = token.replace('Bearer ', '');
         const decoded =  jwt.verify(tokenWithoutBearer, secretKey);
-        console.log(decoded)
         if (!decoded) {
             return res.status(401).json({ error: 'Unauthorized: Invalid token' });
         }
-        console.log(req.user)
         req.user = decoded; // Store the decoded token payload for future use
 
         next();
@@ -34,7 +30,7 @@ const authenticate =  (req, res, next) => {
 };
 
 // Login route for generating JWT token
-app.post('/api/login', (req, res) => {
+app.post('/login', (req, res) => {
     // Perform authentication logic, validate credentials, etc.
     const username = req.body.username;
     const password = req.body.password;
@@ -53,7 +49,7 @@ app.post('/api/login', (req, res) => {
 });
 
 
-app.post('/api/intersections', authenticate, (req, res) => {
+app.post('/intersections', authenticate, (req, res) => {
     try {
         // Check if the linestring is present and valid
         const linestring = req.body.linestring;
